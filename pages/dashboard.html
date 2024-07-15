@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Search Portal</title>
+  <link rel="stylesheet" href="/css/style.min.css">
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    header .nav-links a {
+      color: white;
+      margin-left: 1rem;
+      text-decoration: none;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      background-color: #fff;
+      width: 250px;
+      padding: 1rem;
+      border-right: 1px solid #ddd;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .job-listing {
+      background-color: #fff;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-listing h3 {
+      margin-top: 0;
+    }
+
+    footer {
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+      <div class="logo">Job Portal</div>
+      <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">Profile</a>
+        <a href="/login">Logout</a>
+      </div>
+  </header>
+  <div class="container">
+      <aside class="sidebar">
+        <h2>Filters</h2>
+        <label for="job-type">Job Type</label>
+        <select id="job-type">
+          <option value="">Select...</option>
+          <option value="full-time">Full-Time</option>
+          <option value="part-time">Part-Time</option>
+          <option value="contract">Contract</option>
+        </select>
+        <label for="location">Location</label>
+        <input type="text" id="location" placeholder="Enter location">
+        <label for="keywords">Keywords</label>
+        <input type="text" id="keywords" placeholder="Enter keywords">
+        <button type="button">Apply Filters</button>
+      </aside>
+      <main class="main-content">
+        <div class="job-listing">
+          <h3>Software Engineer</h3>
+          <p>Company XYZ - New York, NY</p>
+          <p>Full-Time</p>
+          <button type="button">Apply</button>
+        </div>
+        <div class="job-listing">
+          <h3>Project Manager</h3>
+          <p>Company ABC - San Francisco, CA</p>
+          <p>Contract</p>
+          <button type="button">Apply</button>
+        </div>
+        <!-- More job listings... -->
+      </main>
+  </div>
+  <footer>
+      &copy; 2024 Job Portal. All rights reserved.
+  </footer>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const auth = new Auth();
+
+      document.querySelector(".logout").addEventListener("click", (e) => {
+        auth.logOut();
+      });
+
+      const filterButton = document.querySelector('.sidebar button');
+      const jobListings = document.querySelectorAll('.job-listing');
+
+      filterButton.addEventListener('click', () => {
+        const jobType = document.getElementById('job-type').value;
+        const location = document.getElementById('location').value.toLowerCase();
+        const keywords = document.getElementById('keywords').value.toLowerCase();
+
+        jobListings.forEach(listing => {
+          const jobTypeMatch = jobType === '' || listing.innerText.toLowerCase().includes(jobType.toLowerCase());
+          const locationMatch = location === '' || listing.innerText.toLowerCase().includes(location);
+          const keywordsMatch = keywords === '' || listing.innerText.toLowerCase().includes(keywords);
+
+          if (jobTypeMatch && locationMatch && keywordsMatch) {
+            listing.style.display = '';
+          } else {
+            listing.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+  
+</body>
+
+</html>
