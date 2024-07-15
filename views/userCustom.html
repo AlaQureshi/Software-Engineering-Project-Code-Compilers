@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Job User Profile</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans:300);
+        
+        * {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        :root {
+            --bg: #111111;
+            --vibrant: #E8474C;
+            --text: white;
+            --label: white;
+            --border: transparent;
+            --static: #222222;
+            --focus: #4E4E4E;
+            --active: white;
+            --inactive: #4E4E4E;
+            --error: #E8474C;
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #111;
+            background-repeat: no-repeat;
+        }
+
+        .signupSection {
+            background: url(https://source.unsplash.com/TV2gg2kZD1o/1600x800);
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0 auto;
+            width: 90%;
+            max-width: 800px;
+            height: auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            box-shadow: 3px 10px 20px 5px rgba(0, 0, 0, .5);
+        }
+
+        .info {
+            width: 100%;
+            background: rgba(20, 20, 20, .8);
+            padding: 30px 0;
+            border-bottom: 5px solid rgba(30, 30, 30, .8);
+        }
+
+        .info h2 {
+            padding-top: 30px;
+            font-weight: 300;
+        }
+
+        .info p {
+            font-size: 18px;
+        }
+
+        .icon {
+            font-size: 8em;
+            padding: 20px 0;
+            color: rgba(10, 180, 180, 1);
+        }
+
+        .signupForm {
+            width: 100%;
+            padding: 30px 0;
+            background: rgba(20, 40, 40, .8);
+            transition: .2s;
+        }
+
+        .signupForm h2 {
+            font-weight: 300;
+        }
+
+        .inputFields {
+            margin: 15px 0;
+            font-size: 16px;
+            padding: 10px;
+            width: calc(100% - 40px);
+            border: 1px solid rgba(10, 180, 180, 1);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: rgba(20, 20, 20, .2);
+            color: white;
+            outline: none;
+        }
+
+        .noBullet {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #join-btn {
+            border: 1px solid rgba(10, 180, 180, 1);
+            background: rgba(20, 20, 20, .6);
+            font-size: 18px;
+            color: white;
+            margin-top: 20px;
+            padding: 10px 50px;
+            cursor: pointer;
+            transition: .4s;
+        }
+
+        #join-btn:hover {
+            background: rgba(20, 20, 20, .8);
+            padding: 10px 80px;
+        }
+
+        .input {
+            font: inherit;
+            line-height: normal;
+            width: 100%;
+            box-sizing: border-box;
+            background: var(--static);
+            color: white;
+            position: relative;
+            padding: 0.75em 1em;
+            border: 1px solid var(--border);
+            margin-bottom: 1em;
+        }
+
+        .input::placeholder {
+            color: var(--label);
+        }
+
+        .input:-webkit-autofill {
+            box-shadow: 0 0 0px 1000px var(--bg) inset;
+            -webkit-text-fill-color: white;
+            border-top-color: var(--bg);
+            border-left-color: var(--bg);
+            border-right-color: var(--bg);
+        }
+
+        .input:not(:focus):not(:active).error,
+        .error .input:not(:focus):not(:active) {
+            background-image: linear-gradient(135deg, rgba(var(--vibrant), .5) 2px, transparent 2px);
+        }
+
+        .input:active,
+        .input:focus {
+            background: var(--focus);
+        }
+
+        .error {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: 100;
+            font-size: .625em;
+            color: var(--label);
+        }
+
+        .checkbox {
+            border: 0;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+
+        .checkbox + label {
+            display: inline-block;
+            width: auto;
+            color: var(--inactive);
+            position: relative;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .checkbox:focus + label,
+        .checkbox:active + label {
+            color: var(--focus);
+        }
+
+        .checkbox:checked + label {
+            color: var(--active);
+        }
+
+        .button {
+            font: inherit;
+            line-height: normal;
+            cursor: pointer;
+            background: var(--vibrant);
+            color: white;
+            font-weight: bold;
+            width: auto;
+            margin-left: auto;
+            padding: 0 2em;
+            display: block;
+        }
+
+        .button:hover,
+        .button:focus,
+        .button:active {
+            color: white;
+            border-color: white;
+        }
+
+        .button:active {
+            position: relative;
+            top: 1px;
+            left: 1px;
+        }
+
+        .form {
+            max-width: 40em;
+            margin: 0 auto;
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .field {
+            width: 100%;
+            margin: 0 0 1.5em 0;
+        }
+
+        @media screen and (min-width: 40em) {
+            .field.half {
+                width: calc(50% - 1px);
+            }
+        }
+
+        .field.last {
+            margin-left: auto;
+        }
+
+        .text-input {
+            background: var(--static);
+            color: white;
+        }
+
+        .textarea {
+            background: var(--static);
+            color: white;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="signupSection">
+        <div class="info">
+            <h2>Welcome Back!</h2>
+            <p>Update your profile to find the best job matches for you.</p>
+            <div class="icon">👔</div>
+        </div>
+        <div class="signupForm">
+            <h2>Update Profile</h2>
+            <form class="form" action="/save-profile" method="POST" enctype="multipart/form-data">
+                <div class="field">
+                    <label for="fullName" class="label">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" class="text-input input inputFields" required>
+                </div>
+
+                <div class="field">
+                    <label for="email" class="label">Email</label>
+                    <input type="email" id="email" name="email" class="text-input input inputFields" required>
+                </div>
+
+                <div class="field">
+                    <label for="education" class="label">Education</label>
+                    <textarea id="education" name="education" class="textarea input inputFields" rows="3" required></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="experience" class="label">Work Experience</label>
+                    <textarea id="experience" name="experience" class="textarea input inputFields" rows="3"></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="skills" class="label">Skills</label>
+                    <input type="text" id="skills" name="skills" class="text-input input inputFields" placeholder="e.g., JavaScript, Python, UI/UX Design" required>
+                </div>
+
+                <div class="field">
+                    <label for="resume" class="label">Upload Resume</label>
+                    <input type="file" id="resume" name="resume" class="text-input input inputFields" accept=".pdf,.doc,.docx" required>
+                </div>
+
+                <div class="field last">
+                    <button type="submit" id="join-btn" class="button">Update Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
