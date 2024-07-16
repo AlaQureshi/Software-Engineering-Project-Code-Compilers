@@ -25,6 +25,12 @@ app.get('/login', (req, res) => {
 app.get('/dashboard.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages/dashboard.html'));
 });
+// Route to serve profile.html
+app.get('/profile', (req, res) => {
+    console.log("Profile route hit");
+    res.sendFile(path.join(__dirname, 'pages/profile.html'));
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
