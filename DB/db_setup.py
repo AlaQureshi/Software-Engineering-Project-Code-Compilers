@@ -44,7 +44,8 @@ class JobListing(Base):
     salary = Column(DECIMAL(10, 2))
     date_posted = Column(TIMESTAMP, default=func.now())
     application_deadline = Column(Date)
-    job_type = Column(Enum(JobType))
+    job_type = Column(String(255))
+    application_link = Column(String(255))
 
 class Application(Base):
     __tablename__ = 'Applications'
