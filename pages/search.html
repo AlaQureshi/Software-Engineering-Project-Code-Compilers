@@ -61,7 +61,7 @@
               <p>${job.company_name} - ${job.location}</p>
               <p>${job.salary_range}</p>
               <p>${job.description}</p>
-              <button type="button">Apply</button>
+              <a href="${job.application_link}" class="button">Apply</button></a>
             `;
             jobListings.appendChild(jobListing);
           });
