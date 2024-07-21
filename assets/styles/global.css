@@ -34,16 +34,22 @@ header .nav-links a {
     overflow: hidden;
 }
 
+.searchBar {
+    font-size: 14px;
+}
+
 .sidebar {
     background-color: #fff;
-    width: 250px;
+    width: 260px;
     padding: 1rem;
     border-right: 1px solid #ddd;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar h2 {
     margin-top: 0;
+    text-align: center;
 }
 
 .main-content {
@@ -110,6 +116,7 @@ footer {
 }
 
 .button {
+    margin-top: 0.5rem;
     padding: 0.5rem 1rem;
     background-color: #007bff;
     color: white;
