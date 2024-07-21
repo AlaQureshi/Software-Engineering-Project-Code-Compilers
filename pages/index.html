@@ -4,66 +4,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Search Portal</title>
+    <title>Job Portal - Home</title>
+    <link rel="stylesheet" href="../assets/styles/global.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-        }
-
-        .navbar a:hover {
-            background-color: #575757;
-            border-radius: 4px;
-        }
-
-        .navbar .app-name {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .navbar .links {
-            display: flex;
-            gap: 10px;
-        }
-
         .welcome-message {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: calc(100vh - 52px);
-            /* Full height minus the navbar height */
+            font-size: 2rem;
             text-align: center;
-            font-size: 24px;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="app-name">Job Search Portal</div>
-        <div class="links">
-            <a href="/signup">Signup</a>
-            <a href="/login">Login</a>
+    <header class="dashboard-header">
+        <div class="logo">Job Portal</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a id="routePlaceholder"></a>
+            <a id="authButton"></a>
         </div>
-    </div>
+    </header>
+
     <div class="welcome-message">
         Welcome to your Job Search Portal
     </div>
+
+    <footer>
+        &copy; 2024 Job Portal. All rights reserved.
+    </footer>
+
+    <script src="../assets/scripts/global.js"></script>
+    <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function parseJwt(token) {
+            if (!token) {
+                return null;
+            }
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const routePlaceholder = document.getElementById('routePlaceholder');
+            const authButton = document.getElementById('authButton');
+            const token = getCookie('token');
+            const userData = parseJwt(token);
+
+            if (userData && userData.user_type) {
+                console.log('userData.user_type', userData.user_type)
+                if (userData.user_type === 'JOB_SEEKER') {
+                    routePlaceholder.href = '/search';
+                    routePlaceholder.textContent = 'Search';
+                } else if (userData.user_type === 'EMPLOYER') {
+                    routePlaceholder.href = '/admin';
+                    routePlaceholder.textContent = 'Admin';
+                }
+
+                authButton.id = 'logoutButton';
+                authButton.textContent = 'Logout';
+                authButton.href = '#';
+                authButton.addEventListener('click', function () {
+                    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                    window.location.href = '/';
+                    alert('Logged out successfully');
+                });
+            } else {
+                authButton.textContent = 'Login';
+                authButton.href = '/login';
+            }
+        });
+    </script>
 </body>
+
 
 </html>

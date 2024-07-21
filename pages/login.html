@@ -93,7 +93,7 @@
     <div class="container">
         <img src="../assets/images/logo.png" alt="Logo" class="logo">
         <h2 class="text-center">Login</h2>
-        <form action="/dashboard" id="loginForm" novalidate>
+        <form id="loginForm" novalidate>
             <div class="input-group">
                 <label for="username" class="label">Username</label>
                 <input type="text" id="username" class="input" required>
@@ -127,7 +127,12 @@
           if (data.token) {
             document.cookie = `token=${data.token}; path=/;`;
             alert('Login successful');
-            window.location.href = '/dashboard';
+            if (data.userType === 'JOB_SEEKER') {
+              window.location.href = '/search';
+            } else {
+              window.location.href = '/admin';
+            }
+            
           } else {
             alert(data.message);  
           }

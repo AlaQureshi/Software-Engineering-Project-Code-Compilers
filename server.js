@@ -17,12 +17,21 @@ app.use(cookieParser());
 // Create a DB connection
 const db = new sqlite3.Database('./database.db');
 
-// Create users table if it doesn't exist
+// Job Search Portal expect the tables users and jobs to exist
+// If they don't, create them in the DB
 db.run(`CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
   user_type TEXT NOT NULL CHECK(user_type IN('JOB_SEEKER', 'EMPLOYER'))
+)`);
+db.run(`CREATE TABLE IF NOT EXISTS jobs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title VARCHAR(50) NOT NULL,
+  description TEXT,
+  salary_range VARCHAR(50),
+  location VARCHAR(100),
+  company_name VARCHAR(50)
 )`);
 
 // Signup route
@@ -52,21 +61,39 @@ app.post('/login', (req, res) => {
             return res.status(401).json({ message: 'Invalid password' });
         }
 
-        const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '1h' });
-        res.status(200).json({ token });
+        const token = jwt.sign({ id: user.id, user_type: user.user_type }, secretKey, { expiresIn: '1h' });
+        res.status(200).json({ token, userType: user.user_type });
     });
 });
 
 // Middleware to protect routes
 const authenticateJWT = (req, res, next) => {
     const token = req.cookies.token;
+    const notAuthenticatedPage = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Authentication Required</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+            </style>
+        </head>
+        <body>
+            <div class="message">You need to log in first to visit this page.</div>
+            <a href="/login">Go to Login</a>
+        </body>
+        </html>
+    `;
+
     if (!token) {
-        return res.sendStatus(403);
+        return res.send(notAuthenticatedPage);
     }
 
     jwt.verify(token, secretKey, (err, user) => {
         if (err) {
-            return res.sendStatus(403);
+            return res.send(notAuthenticatedPage);
         }
 
         req.user = user;
@@ -92,15 +119,92 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages/login.html'));
 });
 
-// Route to serve dashboard.html
-app.get('/dashboard', authenticateJWT, (req, res) => {
-    res.sendFile(path.join(__dirname, 'pages/dashboard.html'));
+// Route to serve search.html
+app.get('/search', authenticateJWT, (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages/search.html'));
+});
+
+// Route to serve admin.html
+app.get('/admin', authenticateJWT, (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages/admin.html'));
 });
 
 // Route to serve profile.html
 app.get('/profile', (req, res) => {
     console.log("Profile route hit");
     res.sendFile(path.join(__dirname, 'pages/profile.html'));
+});
+
+// API to create a job
+app.post('/api/jobs', authenticateJWT, (req, res) => {
+    const { title, description, salary_range, location, company_name } = req.body;
+    db.run(`INSERT INTO jobs (title, description, salary_range, location, company_name) VALUES (?, ?, ?, ?, ?)`,
+        [title, description, salary_range, location, company_name], function (err) {
+            if (err) {
+                return res.status(500).json({ message: `Error occurred: ${err}` });
+            }
+            res.status(200).json({ message: 'Job created successfully.', jobId: this.lastID });
+        });
+});
+
+// API to delete a job
+app.delete('/api/jobs/:id', authenticateJWT, (req, res) => {
+    const jobId = req.params.id;
+    db.run(`DELETE FROM jobs WHERE id = ?`, jobId, function (err) {
+        if (err) {
+            return res.status(500).json({ message: `Error occurred: ${err}` });
+        }
+        res.status(200).json({ message: 'Job deleted successfully.' });
+    });
+});
+
+// API to update a job
+app.put('/api/jobs/:id', authenticateJWT, (req, res) => {
+    const jobId = req.params.id;
+    const { title, description, salary_range, location, company_name } = req.body;
+    db.run(`UPDATE jobs SET title = ?, description = ?, salary_range = ?, location = ?, company_name = ? WHERE id = ?`,
+        [title, description, salary_range, location, company_name, jobId], function (err) {
+            if (err) {
+                return res.status(500).json({ message: `Error occurred: ${err}` });
+            }
+            res.status(200).json({ message: 'Job updated successfully.' });
+        });
+});
+
+// API to search for jobs
+app.get('/api/jobs/search', authenticateJWT, (req, res) => {
+    const query = req.query.q;
+    console.log('query', query)
+    db.all(`SELECT * FROM jobs WHERE title LIKE ? OR description LIKE ? OR location LIKE ?`, [`%${query}%`, `%${query}%`, `%${query}%`], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ message: `Error occurred: ${err}` });
+        }
+        res.status(200).json(rows);
+    });
+});
+
+// API to get a single job by ID
+app.get('/api/jobs/:id', authenticateJWT, (req, res) => {
+    const jobId = req.params.id;
+    db.get(`SELECT * FROM jobs WHERE id = ?`, [jobId], (err, row) => {
+        if (err) {
+            return res.status(500).json({ message: `Error occurred: ${err}` });
+        }
+        if (!row) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
+        res.status(200).json(row);
+    });
+});
+
+// API to get all jobs
+app.get('/api/jobs', authenticateJWT, (req, res) => {
+    db.all(`SELECT * FROM jobs`, (err, rows) => {
+        if (err) {
+            return res.status(500).json({ message: `Error occurred: ${err}` });
+        }
+        res.status(200).json(rows);
+    });
 });
 
 // Start express app
