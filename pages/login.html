@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login</title>
 <link rel="stylesheet" href="/css/style.min.css">
-<script defer src="/js/login.js"></script>
 <style>
     body {
       font-family: 'Open Sans', sans-serif;
@@ -94,7 +93,7 @@
     <div class="container">
         <img src="../assets/images/logo.png" alt="Logo" class="logo">
         <h2 class="text-center">Login</h2>
-        <form action="/dashboard.html" class="loginForm" novalidate>
+        <form action="/dashboard" id="loginForm" novalidate>
             <div class="input-group">
                 <label for="username" class="label">Username</label>
                 <input type="text" id="username" class="input" required>
@@ -107,8 +106,34 @@
             </div>
             <button class="button" type="submit">Login</button>
         </form>
-        <p class="text-center">Don't have an account? <a href="/signup.html">Sign Up</a></p>
+        <p class="text-center">Don't have an account? <a href="/signup">Sign Up</a></p>
     </div>
+
+    <script>
+      document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        }).then(
+          response => response.json()
+        ).then(data => {
+          if (data.token) {
+            document.cookie = `token=${data.token}; path=/;`;
+            alert('Login successful');
+            window.location.href = '/dashboard';
+          } else {
+            alert(data.message);  
+          }
+        });
+      });
+    </script>
 </body>
 
 </html>

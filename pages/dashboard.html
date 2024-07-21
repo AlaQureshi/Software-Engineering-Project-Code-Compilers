@@ -7,6 +7,7 @@
   <title>Job Search Portal</title>
   <link rel="stylesheet" href="/css/style.min.css">
   <style>
+
     body {
       font-family: 'Open Sans', sans-serif;
       background-color: #f0f2f5;
@@ -73,6 +74,10 @@
       margin-top: 0;
     }
 
+    .dashboard-header a {
+      cursor: pointer;
+    }
+
     footer {
       background-color: #007bff;
       color: white;
@@ -82,12 +87,12 @@
   </style>
 </head>
 <body>
-  <header>
+  <header class="dashboard-header">
       <div class="logo">Job Portal</div>
       <div class="nav-links">
         <a href="#">Home</a>
         <a href="/profile">Profile</a>
-        <a href="/login">Logout</a>
+        <a id="logoutButton">Logout</a>
       </div>
   </header>
   <div class="container">
@@ -124,39 +129,17 @@
   </div>
   <footer>
       &copy; 2024 Job Portal. All rights reserved.
-  </footer>
-  
+  </footer> 
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const auth = new Auth();
+    document.getElementById('logoutButton').addEventListener('click', function () {
+      // Remove the token from cookies
+      document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
 
-      document.querySelector(".logout").addEventListener("click", (e) => {
-        auth.logOut();
-      });
-
-      const filterButton = document.querySelector('.sidebar button');
-      const jobListings = document.querySelectorAll('.job-listing');
-
-      filterButton.addEventListener('click', () => {
-        const jobType = document.getElementById('job-type').value;
-        const location = document.getElementById('location').value.toLowerCase();
-        const keywords = document.getElementById('keywords').value.toLowerCase();
-
-        jobListings.forEach(listing => {
-          const jobTypeMatch = jobType === '' || listing.innerText.toLowerCase().includes(jobType.toLowerCase());
-          const locationMatch = location === '' || listing.innerText.toLowerCase().includes(location);
-          const keywordsMatch = keywords === '' || listing.innerText.toLowerCase().includes(keywords);
-
-          if (jobTypeMatch && locationMatch && keywordsMatch) {
-            listing.style.display = '';
-          } else {
-            listing.style.display = 'none';
-          }
-        });
-      });
+      // Redirect to the main page
+      window.location.href = '/';
     });
   </script>
-  
 </body>
 
 </html>
