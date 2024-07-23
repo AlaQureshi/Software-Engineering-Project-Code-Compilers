@@ -43,8 +43,8 @@
           <input type="text" id="companyName" required>
         </div>
         <div class="form-group">
-            <label for="application_link">Application Link</label>
-            <input type="text" id="application_link" required="">
+            <label for="applicationLink">Application Link</label>
+            <input type="text" id="applicationLink" required="">
           </div>
         <div class="form-group">
           <button type="submit">Save Job</button>
@@ -100,6 +100,7 @@
         document.getElementById('salaryRange').value = job.salary_range;
         document.getElementById('location').value = job.location;
         document.getElementById('companyName').value = job.company_name;
+        document.getElementById('applicationLink').value = job.application_link;
 
         // Temporarily store jobId in the form
         document.getElementById('jobForm').dataset.jobId = job.id;
@@ -133,8 +134,9 @@
       const salaryRange = document.getElementById('salaryRange').value;
       const location = document.getElementById('location').value;
       const companyName = document.getElementById('companyName').value;
+      const applicationLink = document.getElementById('applicationLink').value
 
-      const job = { title, description, salary_range: salaryRange, location, company_name: companyName,  };
+      const job = { title, description, salary_range: salaryRange, location, company_name: companyName, application_link: applicationLink};
 
       if (document.getElementById('jobForm').dataset.isEditing) {
         const jobId = document.getElementById('jobForm').dataset.jobId;
